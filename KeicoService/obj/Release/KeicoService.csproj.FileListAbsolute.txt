@@ -1,0 +1,57 @@
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\KeicoService.exe.config
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\KeicoService.exe
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\KeicoService.pdb
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\NLog.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\Topshelf.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\Topshelf.NLog.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\NLog.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\Topshelf.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Release\Topshelf.NLog.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\obj\Release\KeicoService.exe
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\obj\Release\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\KeicoService.exe.config
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\obj\Release\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\obj\Release\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\Topshelf.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\Topshelf.NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\Topshelf.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\TestR\Topshelf.NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\KeicoService.exe.config
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\Topshelf.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\Topshelf.NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\Topshelf.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Release\Topshelf.NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\obj\Release\KeicoService.csprojResolveAssemblyReference.cache
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\KeicoService.exe.config
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\obj\Release\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\obj\Release\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Core.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Log4Net1213.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\log4net.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Topshelf.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Topshelf.NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Core.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Core.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Log4Net1213.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Common.Logging.Log4Net1213.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\log4net.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Topshelf.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\bin\Release\Topshelf.NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\with-LOG\KeicoService\obj\Release\KeicoService.csprojResolveAssemblyReference.cache
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Release\KeicoService.exe.config
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\obj\Release\KeicoService.exe
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\obj\Release\KeicoService.pdb

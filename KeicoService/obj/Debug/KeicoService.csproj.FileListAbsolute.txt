@@ -1,0 +1,47 @@
+C:\Users\Toyan\AppData\Local\Temporary Projects\KeicoService\bin\Debug\KeicoService.exe.config
+C:\Users\Toyan\AppData\Local\Temporary Projects\KeicoService\obj\Debug\KeicoService.csprojResolveAssemblyReference.cache
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\KeicoService.exe.config
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\obj\Debug\KeicoService.csprojResolveAssemblyReference.cache
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\KeicoService.exe
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\KeicoService.pdb
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\NLog.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\Topshelf.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\Topshelf.NLog.dll
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\NLog.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\Topshelf.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\bin\Debug\Topshelf.NLog.xml
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\obj\Debug\KeicoService.exe
+C:\Users\Toyan\Documents\Visual Studio 2012\Projects\KeicoService\KeicoService\obj\Debug\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\KeicoService.exe.config
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\KeicoService.pdb
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\Topshelf.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\Topshelf.NLog.dll
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\Topshelf.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\bin\Debug\Topshelf.NLog.xml
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\obj\Debug\KeicoService.exe
+F:\Data_Toto\KumpulanCodingToto\UTILITY_PROGRAM\KeicoService\KeicoService\obj\Debug\KeicoService.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\KeicoService.exe.config
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\obj\Debug\KeicoService.exe
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\obj\Debug\KeicoService.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\KeicoService.exe
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\KeicoService.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Core.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Log4Net1213.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\log4net.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Topshelf.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Topshelf.NLog.dll
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Core.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Core.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Log4Net1213.pdb
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Common.Logging.Log4Net1213.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\log4net.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\NLog.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Topshelf.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\bin\Debug\Topshelf.NLog.xml
+G:\Software\Toyota_New\KeicoService\with-LOG\KeicoService\obj\Debug\KeicoService.csprojResolveAssemblyReference.cache
