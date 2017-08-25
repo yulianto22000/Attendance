@@ -268,7 +268,7 @@ namespace KeicoService
                     //    }
                     //});
 
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }, TaskCreationOptions.LongRunning);
             return true;
