@@ -29,7 +29,6 @@ namespace KeicoService
         }
         public NetworkDevice()
         {
-            this.tcpClient = new System.Net.Sockets.TcpClient();
         }
         /// <summary>
         /// Constructor
