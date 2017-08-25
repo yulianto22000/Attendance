@@ -69,6 +69,7 @@ namespace KeicoService
             //log.Debug("Ping " + address.ToString());
             if (PingHost(address))
             {
+				this.tcpClient = new System.Net.Sockets.TcpClient();
                 //log.Debug("Replied from " + address.ToString());
                 // Don't allow another socket to bind to this port.
                 //tcpClient.ExclusiveAddressUse = true;
@@ -185,16 +186,19 @@ namespace KeicoService
                     }
                     catch (System.Net.Sockets.SocketException)
                     {
+						tcpClient.Close();
                         //log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString());
                         return false;
                     }
                     catch (IOException)
                     {
+						tcpClient.Close();
                         //log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString());
                         return false;
                     }
                     catch (Exception ex)
                     {
+						tcpClient.Close();
                         //log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString(), ex);
                         return false;
                     }
@@ -352,151 +356,168 @@ namespace KeicoService
             byte[] outputBuffer1 = new byte[8];
             byte[] outputBuffer2 = new byte[14];
             //log.Debug("Sending \"Get Data\" command [" + this.NID + "]");
-            stream.Write(buffer, 0, buffer.Length);
-            stream.Read(outputBuffer1, 0, outputBuffer1.Length);
-            
-            //log.Debug("Status package received [" + this.NID + "]");
-            //log.Debug(BitConverter.ToString(outputBuffer1));
-            int responseStatus = outputBuffer1[4] + ((int)outputBuffer1[5] << 8);
-            int responseNID = outputBuffer1[2] + ((int)outputBuffer1[3] << 8);
-            if (NID == responseNID && responseStatus == 1)
-            {
-                if (outputBuffer1[0] == 0x5a && outputBuffer1[1] == 0xa5 && outputBuffer1[2] == buffer[2] && outputBuffer1[3] == buffer[3] && outputBuffer1[4] == 0x1 && outputBuffer1[5] == 0x0)
-                {
-                    stream.Read(outputBuffer2, 0, outputBuffer2.Length);
-                    //log.Debug("Header package received [" + this.NID + "]");
-                    //log.Debug(BitConverter.ToString(outputBuffer2));
-                    int count = BitConverter.ToInt32(outputBuffer2, 8);
-                    if (outputBuffer2[0] == 0xaa && outputBuffer2[1] == 0x55 && outputBuffer2[2] == buffer[2] && outputBuffer2[3] == buffer[3] && outputBuffer2[4] == 0x0 && outputBuffer2[5] == 0x0 && outputBuffer2[6] == 0x1 && outputBuffer2[7] == 0x0 && outputBuffer2[11] == 0x0)
-                    {
-                        //int count = outputBuffer2[8] + ((int)outputBuffer2[9] << 8) + ((int)outputBuffer2[10] << 16);
-                        int recordCount = count;
-                        List<AttendanceData> attandenceData = null;
-                        if (recordCount > 0)
-                        {
-                            attandenceData = new List<AttendanceData>();
-                        }
-                        while (count > 0)
-                        {
-                            int part = Math.Min(85, count);
-                            byte[] logDataBuffer = new byte[4 + (part * 12) + 2];
-                            stream.Read(logDataBuffer, 0, logDataBuffer.Length); // cannot read
-                            //log.Debug("Data package received [" + this.NID + "]");
-                            //log.Debug(BitConverter.ToString(logDataBuffer));
-                            if (!IsResponseValid(logDataBuffer))
-                            {
-                                //log.Error(string.Format("Invalid response data [{0}] {1}", this.NID, BitConverter.ToString(logDataBuffer)));
-                                isValid = false;
-                                if (getAllData)
-                                {
-                                    System.Threading.Thread.Sleep(10);
-                                    continue;
-                                }
-                                else
-                                {
-                                    return null;
-                                }
-                            }
-                            for (int i = 0; i < part; i++)
-                            {
-                                //Program.Devices[this.NID].Status = string.Format("Processing attendance data part #{0}/{1}", (recordCount - count) + i + 1, recordCount);
-                                //log.Debug(string.Format("Processing attendance data #{0}/{1}, part #{2}/{3} [{4}]", (recordCount - count) + i + 1, recordCount, i + 1, part, this.NID));
-                                uint dateTimeTicks = 0;
-                                int userID = 0;
-                                int priv;
-                                int mode;
-                                int sensor;
-                                int fk;
-                                uint prop;
-                                dateTimeTicks = BitConverter.ToUInt32(logDataBuffer, 4 + (i * 12));
-                                userID = BitConverter.ToInt32(logDataBuffer, 8 + (i * 12));
-                                prop = BitConverter.ToUInt32(logDataBuffer, 12 + (i * 12));
-                                priv = (int)prop & 0x01;
-                                sensor = (int)(prop >> 1) & 0xff;
-                                mode = (int)(prop >> 9) & 0x0f;
-                                fk = (int)(prop >> 13) & 0xff;
-                                uint sec;
-                                uint min;
-                                uint hour;
-                                uint days;
-                                sec = dateTimeTicks % 60;
-                                dateTimeTicks /= 60;
-                                min = dateTimeTicks % 60;
-                                dateTimeTicks /= 60;
-                                hour = dateTimeTicks % 24;
-                                dateTimeTicks /= 24;
-                                days = dateTimeTicks;
-                                var dateTime = new DateTime(2000, 1, 1, (int)hour, (int)min, (int)sec).AddDays(days);
-                                var data = new AttendanceData
-                                {
-                                    UserID = userID,
-                                    DateTime = dateTime,
-                                    UserType = (UserType)priv,
-                                    SensorType = (SensorType)sensor,
-                                    Mode = (Mode)mode,
-                                    FunctionKey = (FunctionKey)(int)(fk / 10),
-                                    FunctionNumber = (int)(fk % 10)
-                                };
-                                attandenceData.Add(data);
-                                //log.Debug(string.Format("{0}\t{1}\t\t{2}\t{3}\t{4}\t{5}\t{6}\t{7:yyyy-MM-dd HH:mm:ss}", (recordCount - count) + i + 1, data.UserID, (int)data.UserType, (int)data.SensorType, (int)data.Mode, ((int)data.FunctionKey * 10) + data.FunctionNumber, 0, data.DateTime));
-                            }
-                            count -= part;
-                            if (count > 0)
-                            {
-                                System.Threading.Thread.Sleep(7);
-                            }
-                            else
-                            {
-                                System.Threading.Thread.Sleep(1);
-                            }
-                        }
-                        if (recordCount > 0)
-                        {
-                            
-                            // delete data from device
-                            //log.Debug("Deleting data from device [" + this.NID + "]");
-                            byte[] deleteDataBuffer = new byte[] { 0x5a, 0xa5, 0, 0, 0x01, 0, 0, 0, 0, 0 };
-                            deleteDataBuffer[0] = outputBuffer1[0];
-                            deleteDataBuffer[1] = outputBuffer1[1];
-                            deleteDataBuffer[2] = outputBuffer1[2];
-                            deleteDataBuffer[3] = outputBuffer1[3];
-                            deleteDataBuffer[4] = outputBuffer2[8]; //(byte)(recordCount & 0xff);
-                            deleteDataBuffer[5] = outputBuffer2[9]; //(byte)(recordCount >> 8);
-                            deleteDataBuffer[6] = outputBuffer2[10]; //(byte)(recordCount >> 8);
-                            deleteDataBuffer[7] = outputBuffer2[11]; //(byte)(recordCount >> 8);
+            try {
+				stream.Write(buffer, 0, buffer.Length);
+				stream.Read(outputBuffer1, 0, outputBuffer1.Length);
+				
+				//log.Debug("Status package received [" + this.NID + "]");
+				//log.Debug(BitConverter.ToString(outputBuffer1));
+				int responseStatus = outputBuffer1[4] + ((int)outputBuffer1[5] << 8);
+				int responseNID = outputBuffer1[2] + ((int)outputBuffer1[3] << 8);
+				if (NID == responseNID && responseStatus == 1)
+				{
+					if (outputBuffer1[0] == 0x5a && outputBuffer1[1] == 0xa5 && outputBuffer1[2] == buffer[2] && outputBuffer1[3] == buffer[3] && outputBuffer1[4] == 0x1 && outputBuffer1[5] == 0x0)
+					{
+						stream.Read(outputBuffer2, 0, outputBuffer2.Length);
+						//log.Debug("Header package received [" + this.NID + "]");
+						//log.Debug(BitConverter.ToString(outputBuffer2));
+						int count = BitConverter.ToInt32(outputBuffer2, 8);
+						if (outputBuffer2[0] == 0xaa && outputBuffer2[1] == 0x55 && outputBuffer2[2] == buffer[2] && outputBuffer2[3] == buffer[3] && outputBuffer2[4] == 0x0 && outputBuffer2[5] == 0x0 && outputBuffer2[6] == 0x1 && outputBuffer2[7] == 0x0 && outputBuffer2[11] == 0x0)
+						{
+							//int count = outputBuffer2[8] + ((int)outputBuffer2[9] << 8) + ((int)outputBuffer2[10] << 16);
+							int recordCount = count;
+							List<AttendanceData> attandenceData = null;
+							if (recordCount > 0)
+							{
+								attandenceData = new List<AttendanceData>();
+							}
+							while (count > 0)
+							{
+								int part = Math.Min(85, count);
+								byte[] logDataBuffer = new byte[4 + (part * 12) + 2];
+								stream.Read(logDataBuffer, 0, logDataBuffer.Length); // cannot read
+								//log.Debug("Data package received [" + this.NID + "]");
+								//log.Debug(BitConverter.ToString(logDataBuffer));
+								if (!IsResponseValid(logDataBuffer))
+								{
+									//log.Error(string.Format("Invalid response data [{0}] {1}", this.NID, BitConverter.ToString(logDataBuffer)));
+									isValid = false;
+									if (getAllData)
+									{
+										System.Threading.Thread.Sleep(10);
+										continue;
+									}
+									else
+									{
+										return null;
+									}
+								}
+								for (int i = 0; i < part; i++)
+								{
+									//Program.Devices[this.NID].Status = string.Format("Processing attendance data part #{0}/{1}", (recordCount - count) + i + 1, recordCount);
+									//log.Debug(string.Format("Processing attendance data #{0}/{1}, part #{2}/{3} [{4}]", (recordCount - count) + i + 1, recordCount, i + 1, part, this.NID));
+									uint dateTimeTicks = 0;
+									int userID = 0;
+									int priv;
+									int mode;
+									int sensor;
+									int fk;
+									uint prop;
+									dateTimeTicks = BitConverter.ToUInt32(logDataBuffer, 4 + (i * 12));
+									userID = BitConverter.ToInt32(logDataBuffer, 8 + (i * 12));
+									prop = BitConverter.ToUInt32(logDataBuffer, 12 + (i * 12));
+									priv = (int)prop & 0x01;
+									sensor = (int)(prop >> 1) & 0xff;
+									mode = (int)(prop >> 9) & 0x0f;
+									fk = (int)(prop >> 13) & 0xff;
+									uint sec;
+									uint min;
+									uint hour;
+									uint days;
+									sec = dateTimeTicks % 60;
+									dateTimeTicks /= 60;
+									min = dateTimeTicks % 60;
+									dateTimeTicks /= 60;
+									hour = dateTimeTicks % 24;
+									dateTimeTicks /= 24;
+									days = dateTimeTicks;
+									var dateTime = new DateTime(2000, 1, 1, (int)hour, (int)min, (int)sec).AddDays(days);
+									var data = new AttendanceData
+									{
+										UserID = userID,
+										DateTime = dateTime,
+										UserType = (UserType)priv,
+										SensorType = (SensorType)sensor,
+										Mode = (Mode)mode,
+										FunctionKey = (FunctionKey)(int)(fk / 10),
+										FunctionNumber = (int)(fk % 10)
+									};
+									attandenceData.Add(data);
+									//log.Debug(string.Format("{0}\t{1}\t\t{2}\t{3}\t{4}\t{5}\t{6}\t{7:yyyy-MM-dd HH:mm:ss}", (recordCount - count) + i + 1, data.UserID, (int)data.UserType, (int)data.SensorType, (int)data.Mode, ((int)data.FunctionKey * 10) + data.FunctionNumber, 0, data.DateTime));
+								}
+								count -= part;
+								if (count > 0)
+								{
+									System.Threading.Thread.Sleep(7);
+								}
+								else
+								{
+									System.Threading.Thread.Sleep(1);
+								}
+							}
+							if (recordCount > 0)
+							{
+								
+								// delete data from device
+								//log.Debug("Deleting data from device [" + this.NID + "]");
+								byte[] deleteDataBuffer = new byte[] { 0x5a, 0xa5, 0, 0, 0x01, 0, 0, 0, 0, 0 };
+								deleteDataBuffer[0] = outputBuffer1[0];
+								deleteDataBuffer[1] = outputBuffer1[1];
+								deleteDataBuffer[2] = outputBuffer1[2];
+								deleteDataBuffer[3] = outputBuffer1[3];
+								deleteDataBuffer[4] = outputBuffer2[8]; //(byte)(recordCount & 0xff);
+								deleteDataBuffer[5] = outputBuffer2[9]; //(byte)(recordCount >> 8);
+								deleteDataBuffer[6] = outputBuffer2[10]; //(byte)(recordCount >> 8);
+								deleteDataBuffer[7] = outputBuffer2[11]; //(byte)(recordCount >> 8);
 
-                            CalculateChecksum(ref deleteDataBuffer);
-                            //log.Debug("Stream length = " + stream.Length);
-                            //log.Debug("Stream can read = " + stream.CanRead.ToString());
-                            stream.Write(deleteDataBuffer, 0, deleteDataBuffer.Length);
-                            //log.Debug("Stream length = " + stream.Length);
-                            //log.Debug("Stream can read = " + stream.CanRead.ToString());
-                            
-                            //System.Threading.Thread.Sleep(100);
-                            //log.Debug(string.Format("{0} record(s) collected", recordCount));
-                            //Program.Devices[this.NID].Status = string.Format("{0} record(s) collected", recordCount);
-                            return attandenceData;
-                        }
-                        else
-                        {
-                            //Program.Devices[this.NID].Status = "No data available";
-                            //log.Debug("No data available [" + this.NID + "]");
-                        }
-                    }
-                    else
-                    {
-                        //log.Debug("Invalid header [" + this.NID + "]");
-                    }
-                }
-                else
-                {
-                    //log.Debug("Invalid package received [" + this.NID + "]");
-                }
-            }
-            else
-            {
-                //log.Debug("Respon status = FAILED [" + this.NID + "]");
-            }
+								CalculateChecksum(ref deleteDataBuffer);
+								//log.Debug("Stream length = " + stream.Length);
+								//log.Debug("Stream can read = " + stream.CanRead.ToString());
+								stream.Write(deleteDataBuffer, 0, deleteDataBuffer.Length);
+								//log.Debug("Stream length = " + stream.Length);
+								//log.Debug("Stream can read = " + stream.CanRead.ToString());
+								
+								//System.Threading.Thread.Sleep(100);
+								//log.Debug(string.Format("{0} record(s) collected", recordCount));
+								//Program.Devices[this.NID].Status = string.Format("{0} record(s) collected", recordCount);
+								return attandenceData;
+							}
+							else
+							{
+								//Program.Devices[this.NID].Status = "No data available";
+								//log.Debug("No data available [" + this.NID + "]");
+							}
+						}
+						else
+						{
+							//log.Debug("Invalid header [" + this.NID + "]");
+						}
+					}
+					else
+					{
+						//log.Debug("Invalid package received [" + this.NID + "]");
+					}
+				}
+				else
+				{
+					//log.Debug("Respon status = FAILED [" + this.NID + "]");
+				}
+			}
+			catch (System.Net.Sockets.SocketException)
+			{
+				tcpClient.Close();
+				//log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString());
+			}
+			catch (IOException)
+			{
+				tcpClient.Close();
+				//log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString());
+			}
+			catch (Exception ex)
+			{
+				tcpClient.Close();
+				//log.Error("Error when connecting to device " + address.ToString() + ":" + port.ToString(), ex);
+			}
             return null;
         }
 
