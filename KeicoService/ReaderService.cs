@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Configuration;
 using Common.Logging;
-
-
+using System.IO;
 
 
 namespace KeicoService
@@ -18,14 +17,17 @@ namespace KeicoService
     public class ReaderService: ServiceControl
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ReaderService));
+        string strNameMsn = "0000";
+        double dblGLOG = 0;
+       
         public bool Start(HostControl hostControl)
         {
-            string strNameMsn;
-            double dblGLOG = 0;
+           
             var devices = new List<Device>();
             var connectionStringhrportal = System.Configuration.ConfigurationManager.ConnectionStrings["HR-Portal"].ConnectionString;            
             var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Attendance"].ConnectionString;
-           
+            
+
             using (var connection = new SqlConnection(connectionString))
             {
                 logger.Info("Open Coonection with Database For Get Hardware");
@@ -39,47 +41,50 @@ namespace KeicoService
                         {
                             IPAddress = reader.GetString(0),
                             Port = int.Parse(reader.GetString(1)),
-                            NID = int.Parse(reader.GetString(2)),
+                            NID = int.Parse(reader.GetString(2)),                            
+                            PlaceName=reader.GetString(3),
                             Password = 0
                         };
                         devices.Add(config);
                         logger.Info("Device ADD Config");
                     }
                 }
+                
                 connection.Close();
                 logger.Info("Connection Close");
             }
 
-            
-            //var devices = Program.Devices;
-            //devices[1] = new Device() { IPAddress = "192.168.1.12", Port = 5005, NID = 1, Password = 0 };
-            //devices[2] = new Device() { IPAddress = "192.168.1.13", Port = 5005, NID = 1, Password = 0 };
+         
             
             System.Collections.Concurrent.ConcurrentQueue<NetworkDevice> queue = new System.Collections.Concurrent.ConcurrentQueue<NetworkDevice>();
             foreach (var dev in devices)
             {
-                queue.Enqueue(new NetworkDevice(dev.NID, dev.NID) { IPAddress = dev.IPAddress, Port = dev.Port });
+                queue.Enqueue(new NetworkDevice(dev.NID, dev.NID,dev.PlaceName) { IPAddress = dev.IPAddress, Port = dev.Port });
             }
 
-           
-            Task.Factory.StartNew(() =>
+
+            Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
-                    Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew( async () =>
                     {
                         NetworkDevice device;
                         if (queue.TryDequeue(out device))
                         {
+                            
                             if (!device.IsConnected)
                             {
                                 Console.WriteLine("Connecting " + device.IPAddress);
                                 //logger.Info("Connecting " + device.IPAddress);
                                 device.Connect();
                             }
-                            if (device.IsConnected)
+                            if (device.IsConnected || !device.IsConnected) //untuk load test
+                            //if (device.IsConnected)
                             {
                                 Console.WriteLine("Connected " + device.IPAddress);
+                                Console.WriteLine("ID : " + device.NID);
+                                
                                 var root = AppDomain.CurrentDomain.BaseDirectory;
                                 var glogDir = System.IO.Path.Combine(root, "GLOG");
                                 var temporaryFilePath = System.IO.Path.Combine(glogDir, string.Format("~GLOG_{0:000}.txt", device.NID));
@@ -91,19 +96,8 @@ namespace KeicoService
                                 }
                                 // device connected
                                 // get unread attendance data
-                                var data = device.GetAttendanceData();
-                               /* if (data != null)
-                                {
-                                    
-
-                                    foreach (var dat in data)
-                                    {
-                                        Console.WriteLine(string.Format("{0} {1:yyyy-MM-dd H:mm:ss}", dat.UserID, dat.DateTime));
-                                        //lakukan simpan ke database
-
-                                    }
-                                }*/
-                                
+                               
+                                var data = device.GetAttendanceData();                                
                                 if ((data != null && data.Count() > 0) || System.IO.File.Exists(temporaryFilePath))
                                 {
                                     if (data == null) // true when temporary glog is exists
@@ -172,25 +166,8 @@ namespace KeicoService
                                     var dataTobeSaved = existingData != null && existingData.Count() > 0 ? existingData.Union(data) : data;
                                     foreach (var row in dataTobeSaved)
                                     {
-                                        //get mesin name                                         
-                                        using (var connection = new SqlConnection(connectionString))
-                                        {
-                                           
-                                            connection.Open();
-                                            strNameMsn = "0001";
-                                            using (var command = new SqlCommand("SELECT [NID],[place] FROM [HardwareKeicoSF3] where nid='" + device.NID + "'", connection))
-                                            {
-                                                var reader = command.ExecuteReader();
-                                                while (reader.Read())
-                                                {
-                                                    strNameMsn = string.Format("{0:0000}", reader.GetString(1));
-                                                }
-                                            }
-                                            connection.Close();
-                                           
-                                        }
-                                        //end get mesin name
-
+                                        
+                                        strNameMsn = string.Format("{0:0000}", device.PlaceName);
                                         //save to database
                                         if (row.UserID > 0) //nilai -1 (Access denied tidak diambil)
                                         {
@@ -200,7 +177,7 @@ namespace KeicoService
                                                 logger.Info("Connection Open DB Portal and save to Table");
                                                 connectionhr.Open();
                                                 var xuserid = row.UserID > 0 ? row.UserID.ToString("0000000") : row.UserID.ToString();
-                                                using (var command = new SqlCommand("INSERT INTO trans_R(seq_no,EL5K_No,Dev_Type,Dev_id,tr_date,tr_time,tr_data,tr_code,extra,tr_user,staff_number) VALUES('0','" + strNameMsn + "','R','" + device.NID.ToString("00") + "','" + String.Format("{0:yyyyMMdd}", row.DateTime.Date) + "','" + string.Format("{0:00}",row.DateTime.Hour) + string.Format("{0:00}",row.DateTime.Minute) + string.Format("{0:00}",row.DateTime.Second) + "','','0','0000','','" + xuserid + "')", connectionhr))
+                                                using (var command = new SqlCommand("INSERT INTO trans_R(seq_no,EL5K_No,Dev_Type,Dev_id,tr_date,tr_time,tr_data,tr_code,extra,tr_user,staff_number) VALUES('0','" + strNameMsn + "','R','" + device.NID.ToString("00") + "','" + String.Format("{0:yyyyMMdd}", row.DateTime.Date) + "','" + string.Format("{0:00}", row.DateTime.Hour) + string.Format("{0:00}", row.DateTime.Minute) + string.Format("{0:00}", row.DateTime.Second) + "','','0','0000','','" + xuserid + "')", connectionhr))
                                                 command.ExecuteNonQuery();
                                                 connectionhr.Close();
                                             }
@@ -216,61 +193,119 @@ namespace KeicoService
                                     
                                 }
                             }
-                            
-                            queue.Enqueue(device);
-                        }
-                    });
-                    //// set parallel option based on number of CPU and configuration setting.
-                    //ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 4 };
-                    //Parallel.ForEach(devices, options, dev =>
-                    //{
-                    //    // check if device is still in process
-                    //    if (!dev.Value.IsInprogress)
-                    //    {
-                    //        try
-                    //        {
-                    //            Program.Devices[dev.Value.NID].IsInprogress = true;
-                    //            // initialize new device instance
-                    //            using (var device = new NetworkDevice())
-                    //            {
-                    //                if (!device.IsConnected)
-                    //                {
-                    //                    device.Connect();
-                    //                }
-                    //                // connecting to device
-                    //                if (device.IsConnected)
-                    //                {
-                    //                    // device connected
-                    //                    dev.Value.IsOffline = false;
-                    //                    // get unread attendance data
-                    //                    var data = device.GetAttendanceData();
-                    //                    if (data != null)
-                    //                    {
-                    //                        foreach (var dat in data)
-                    //                        {
-                    //                            Console.WriteLine(string.Format("{0} {1:yyyy-MM-dd H:mm:ss}", dat.UserID, dat.DateTime));
-                    //                        }
-                    //                    }
-                    //                }
-                    //                else
-                    //                {
-                    //                    dev.Value.IsOffline = true;
-                    //                }
-                    //            }
-                    //        }
-                    //        catch (System.IO.IOException ioException)
-                    //        {
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //        }
-                    //        Program.Devices[dev.Value.NID].IsInprogress = false;
-                    //    }
-                    //});
 
-                    Thread.Sleep(100);
-                }
+                            //lakukan simpan status koneksi mesin ke dalam database                           
+                            string strStatusLast = "";
+                            string stsKon = "";
+                            //status koneksi
+                            if (!device.IsConnected)
+                            {
+                                stsKon = "OFFLINE";
+                            }
+                            else
+                            {
+                                stsKon = "ONLINE";
+                            }
+
+                            using (var connection = new SqlConnection(connectionString))
+                            {
+                                connection.Open();
+                                using (var command = new SqlCommand("select top(1) * from status_machine where nid='" + device.NID + "' and CAST(FLOOR(CAST(updated AS float)) AS datetime)='" + string.Format("{0:yyyy-MM-dd}", DateTime.Now) + "' order by updated desc", connection))
+                                {
+                                    var reader = command.ExecuteReader();
+                                    while (reader.Read())
+                                    {
+                                        strStatusLast = reader.GetString(3);                                    
+                                    }
+                                    reader.Close();
+                                }
+                                
+                                if (strStatusLast != stsKon)
+                                {
+                                    SqlCommand myCommand = new SqlCommand("INSERT INTO status_machine(nid,ipaddr,namemch,statusmch,updated) VALUES('" + device.NID + "','" + device.IPAddress + "','" + device.PlaceName + "','" + stsKon + "','" + string.Format("{0:yyyy-MM-dd HH:mm:ss.fff}", DateTime.Now) + "')", connection);                                    
+                                    myCommand.ExecuteNonQuery();                                    
+                                }
+                                
+                                connection.Close();
+                            }
+                            queue.Enqueue(device);
+                           // await Task.Delay(50);
+                        }
+
+                        string logdir = System.Configuration.ConfigurationManager.AppSettings["logDir"];
+                        var root1 = AppDomain.CurrentDomain.BaseDirectory;
+                        var glogDir1 = System.IO.Path.Combine(root1, "Logger");
+                        var temporaryFilePath1 = System.IO.Path.Combine(glogDir1, string.Format("Logger.txt"));
+                        var today1 = DateTime.Now;
+                        var path1 = System.IO.Path.Combine(glogDir1, today1.ToString("yyyyMMdd"));
+                       /* using (System.IO.FileStream fs = new FileStream(temporaryFilePath1, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite))
+                        {
+                            var sw = new StreamWriter(fs);
+                            sw.WriteLine("Start Read break_cd in log dir " + logdir + "break_cd.txt "  + today1);
+                            if (File.Exists(logdir + "break_cd.txt"))
+                            {
+                                sw.WriteLine("Filename exist break_cd log dir " + logdir + "break_cd.txt " + today1);
+                            }
+                            else
+                            {
+                                sw.WriteLine("Filename not exist break_cd log dir " + logdir + "break_cd.txt " + today1);
+                            }
+                            sw.Close();
+                            fs.Close();
+                        }
+                        */
+                        //pengecekkan jika ada yang meminta untuk berhenti dulu
+                        //ini dilakukan jika clent akan melakukan managment user
+                        if (File.Exists(logdir + "break_cd.txt"))
+                        {
+                            using (System.IO.FileStream fs = new FileStream(temporaryFilePath1, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite))
+                            {
+                                var sw = new StreamWriter(fs);
+                                sw.WriteLine("break_cd.txt exist and create break_cd_do.txt" + today1);
+                                sw.Close();
+                                fs.Close();
+                            }
+
+                            using (System.IO.FileStream fs = new FileStream(logdir + "break_cd_do.txt", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite))
+                            {
+                                var sw = new StreamWriter(fs);
+                                sw.WriteLine("do!");
+                                sw.Close();
+                                fs.Close();
+                            }
+
+
+                            using (System.IO.FileStream fs = new FileStream(temporaryFilePath1, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite))
+                            {
+                                var sw = new StreamWriter(fs);
+                                sw.WriteLine("break_cd.txt exist");
+                                sw.Close();
+                                fs.Close();
+                            }
+
+                            while (File.Exists(logdir + "break_cd_do.txt"))
+                            {
+                                if (File.Exists(logdir + "break_cd.txt"))//karena terkadang file ini sudah tidak ada tetapi break_cd_do masih ada
+                                {
+                                    Console.WriteLine("Stop Data Collection");
+                                    using (System.IO.FileStream fs = new FileStream(temporaryFilePath1, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, System.IO.FileShare.ReadWrite))
+                                    {
+                                        var sw = new StreamWriter(fs);
+                                        sw.WriteLine("Stop data collection " + today1);
+                                        sw.Close();
+                                        fs.Close();
+                                    }
+                                }
+                            }
+                        }                       
+                        //end stop break
+                    });
+                    Thread.Sleep(20);                    
+                    await Task.Delay(20);
+                }              
             }, TaskCreationOptions.LongRunning);
+                
+           
             return true;
         }
 

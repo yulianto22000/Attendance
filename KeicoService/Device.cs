@@ -13,7 +13,7 @@ namespace KeicoService
         public string PortName { get; set; }
         public int BaudRate { get; set; }
         public int NID { get; set; }
-        public string Place { get; set; }
+        public string PlaceName { get; set; }
         public int Password { get; set; }
         public string Type { get; set; }
         public byte TerminalGroup { get; set; }

@@ -15,6 +15,7 @@ namespace KeicoService
         {
             Program.Devices = new System.Collections.Concurrent.ConcurrentDictionary<int, Device>();
             // change from service account's dir to more logical one
+            //System.Net.ServicePointManager.Expect100Continue = false; //add date 23 aug 2017
 
             var host = HostFactory.New(x =>
             {
@@ -28,10 +29,14 @@ namespace KeicoService
 
                 x.Service<ReaderService>();
                 x.StartAutomatically();
-
+                
+                
             });
             host.Run();
+            
         }
+
+        
 
         public static System.Collections.Concurrent.ConcurrentDictionary<int, Device> Devices
         {
